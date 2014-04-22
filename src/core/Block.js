@@ -21,6 +21,8 @@ jasmine.Block.prototype.execute = function(onComplete) {
       this.func.apply(this.spec);
     } catch (e) {
       this.spec.fail(e);
+    } finally {
+      this.func = undefined; // clear to avoid closure leaking
     }
   }
   onComplete();

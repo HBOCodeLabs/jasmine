@@ -29,11 +29,13 @@ jasmine.WaitsForBlock.prototype.execute = function(onComplete) {
     latchFunctionResult = this.latchFunction.apply(this.spec);
   } catch (e) {
     this.spec.fail(e);
+    this.latchFunction = undefined; // clear to avoid closure leaking
     onComplete();
     return;
   }
 
   if (latchFunctionResult) {
+    this.latchFunction = undefined; // clear to avoid closure leaking
     onComplete();
   } else if (this.totalTimeSpentWaitingForLatch >= this.timeout) {
     var message = 'timed out after ' + this.timeout + ' msec waiting for ' + (this.message || 'something to happen');
@@ -43,6 +45,7 @@ jasmine.WaitsForBlock.prototype.execute = function(onComplete) {
     });
 
     this.abort = true;
+    this.latchFunction = undefined; // clear to avoid closure leaking
     onComplete();
   } else {
     this.totalTimeSpentWaitingForLatch += jasmine.WaitsForBlock.TIMEOUT_INCREMENT;
